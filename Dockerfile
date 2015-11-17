@@ -1,14 +1,10 @@
-FROM debian:jessie
+FROM python:2.7
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV PYTHON /usr/bin/python2.7
 
 RUN apt-get update && \
     apt-get install -qq -y --no-install-recommends \
-        build-essential \
-        python-pip \
-        python-dev \
-        python-setuptools \
         libffi-dev \
         libxml2-dev \
         libxslt1-dev \
