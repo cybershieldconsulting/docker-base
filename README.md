@@ -1,3 +1,4 @@
 # SYNOPSIS
-Base docker image definition for mitmproxy development.
+
+Base "onbuild" docker image definitions for mitmproxy development and releases.
 
