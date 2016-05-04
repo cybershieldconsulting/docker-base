@@ -2,14 +2,6 @@ FROM alpine:3.3
 
 ENV LANG=en_US.UTF-8
 
-RUN adduser -u 7799 -D mitmproxy
-
-USER mitmproxy
-RUN mkdir /home/mitmproxy/.mitmproxy
-VOLUME /home/mitmproxy/.mitmproxy
-
-USER root
-
 ONBUILD COPY requirements.txt /tmp/requirements.txt
 ONBUILD RUN apk add --no-cache \
         git \
@@ -41,8 +33,12 @@ ONBUILD RUN apk add --no-cache \
         python-dev \
         zlib-dev \
     && rm /tmp/requirements.txt \
-    && rm -rf ~/.cache/pip
+    && rm -rf ~/.cache/pip \
+    && adduser -u 7799 -D mitmproxy
+
 ONBUILD USER mitmproxy
+ONBUILD RUN mkdir /home/mitmproxy/.mitmproxy
+ONBUILD VOLUME /home/mitmproxy/.mitmproxy
 
 EXPOSE 8080 8081
 CMD ["mitmproxy"]
