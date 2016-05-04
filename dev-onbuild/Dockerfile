@@ -1,43 +1,23 @@
-FROM alpine:3.3
+FROM python:2.7
+
+ENV DEBIAN_FRONTEND noninteractive
+ENV PYTHON /usr/bin/python2.7
+
+RUN apt-get update && \
+    apt-get install -qq -y --no-install-recommends \
+        libffi-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        libjpeg-dev \
+        git \
+        zlib1g-dev \
+        libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV LANG en_US.UTF-8
-ENV MITM_VER git+https://github.com/mitmproxy/mitmproxy.git@master
+ENV LC_ALL C.UTF-8
 
-RUN apk add --no-cache \
-        git \
-        g++ \
-        py-pip \
-        libffi \
-        libffi-dev \
-        libjpeg-turbo \
-        libjpeg-turbo-dev \
-        libxml2 \
-        libxml2-dev \
-        libxslt \
-        libxslt-dev \
-        openssl \
-        openssl-dev \
-        python \
-        python-dev \
-        zlib \
-        zlib-dev \
- && adduser -u 7799 -D mitmproxy
-
-ONBUILD RUN LDFLAGS=-L/lib pip install $MITM_VER \
-    && apk del --purge \
-        git \
-        g++ \
-        libffi-dev \
-        libjpeg-turbo-dev \
-        libxml2-dev \
-        libxslt-dev \
-        openssl-dev \
-        python-dev \
-        zlib-dev \
-    && rm -rf ~/.cache/pip
-ONBUILD USER mitmproxy
-ONBUILD RUN mkdir /home/mitmproxy/.mitmproxy
-ONBUILD VOLUME /home/mitmproxy/.mitmproxy
-
-EXPOSE 8080 8081
-CMD ["mitmproxy"]
+ONBUILD ADD . /opt/mitmproxy
+ONBUILD WORKDIR /opt/mitmproxy
+ONBUILD RUN [ ! -e requirements.txt ] || pip install -r requirements.txt && \
+    rm -rf ~/.cache/pip /tmp/pip_build_root
